@@ -11,3 +11,37 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+* {
+  /* background-color: #660000; */
+}
+
+.debt-calc-h2 {
+  border: 2px #660000 solid;
+  padding: 10px;
+  margin: 0 10px;
+  margin-bottom: 20px;
+}
+
+.calculate-form {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.pay-here {
+  align-self: center;
+}
+
+.make-payment, .calculate {
+  margin-top: 5px;
+  padding:5px;
+  background-color: bisque;
+  border-radius: 10px;
+  font-size: large;
+}
+
+.history-payments {
+  background-color: antiquewhite;
+  color:black;
+  padding: 5px;
+}
