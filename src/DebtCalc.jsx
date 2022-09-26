@@ -14,6 +14,7 @@ class DebtCalc extends React.Component {
          currentPayment: 0,
          debtInfo: [],
          remDebt: 0,
+         pay: false
       }
    }
 
@@ -67,27 +68,11 @@ class DebtCalc extends React.Component {
    handleSubmit = (e) => {
       e.preventDefault();
 
-      const { currentPayment, minPayment, remDebt, debtInfo} = this.state;
-      console.log(remDebt, 'remdebt')
-      console.log(currentPayment, 'current payment')
-
+      const { currentPayment, minPayment, debtInfo} = this.state;
       const currentPay = +this.state.currentPayment;
-      console.log(currentPay, 'cp');
-      console.log(debtInfo.intPerMonth, 'debt info interest/month');
-
-      //this is subtracting from the interest of the total minimum payment
-      const principle = (+currentPay - debtInfo.intPerMonth);
-      console.log(+principle, 'principle'); 
-
-      const remainder = (debtInfo.totalDebt - principle).toFixed(2);
-
-      // this.setState({remDebt: +remainder});
-      console.log(remainder, 'remainder');
-
-
-      console.log(debtInfo.intPerMonth,'int per month')
-      //this looks like i need to put the total of my loan into a variable state and access it from there
-      if (currentPayment >= minPayment) {
+      const principle = (+currentPay - +debtInfo.intPerMonth);
+      const remainder = +(debtInfo.totalDebt - principle).toFixed(2);
+      if (+currentPayment >= +minPayment) {
          const newItem = {
             currentPayment: +currentPay,
             remDebt: remainder,
@@ -97,30 +82,31 @@ class DebtCalc extends React.Component {
          this.setState((state) => ({
             payHistory: [...state.payHistory, newItem],
             currentPayment: 0,
-            remDebt: remainder,
+            remDebt: +remainder,
             id: '',
+            pay: true,
          }));
-      } else if (+this.state.currentPayment < +this.state.minPayment) {
-         const currentPay = +this.state.currentPayment
-         this.setState({currentPayment: currentPay});
+
+      } else if (+currentPayment < +minPayment) {
+         this.setState({currentPayment: +currentPay});
          alert(`Payment must be greater than or equal to the minimum payment (${minPayment})`);
-      } else if (+this.state.currentPayment > +this.state.loan) {
-         const currentPay = +this.state.currentPayment
-         this.setState({currentPayment: currentPay});
-         alert(`Your payment is over the the loan!`);
-      } else if(+this.state.currentPayment === 0) {
-         const currentPay = +this.state.currentPayment
-         this.setState({currentPayment: currentPay});
+      } else if (+currentPayment > +this.state.loan) {
+         this.setState = {
+            loan: 0,
+            interest: 0,
+            payHistory: [],
+            minPayment: 0,
+            monthlyPayment: 0,
+            currentPayment: 0,
+            debtInfo: [],
+            remDebt: 0,
+            pay: false
+         }
+         alert(`You are now debt free!`);
+      } else if(+currentPayment === 0) {
+         this.setState({currentPayment: +currentPay});
          alert(`You must pay the minimum payment (${minPayment})`);
-      }
-
-      //for te comparisons, covert the variables where the inputs are being held into numbers! 
-      //then do a boolean to see if the statements are true. try to put that there and see where it goes
-
-      //when diagnosing in components, i noticed that the numbers are wrapped in '' verses the 
-      //debtInfo.intPerMonth has a solid 50 with no "" wrapped around the number. 
-      //try to reverse engineer this concept because the rest of the other numbers seem to
-      //look like string
+      }  
    }
 
    render() {
@@ -128,7 +114,6 @@ class DebtCalc extends React.Component {
          {label: 'Loan Amount', name: 'loan'},
          {label: 'Interest Rate', name: 'interest',},
       ]
-
       return (
          <div>
             <h2 class="debt-calc-h2">Debt Calculator</h2>
@@ -163,7 +148,8 @@ class DebtCalc extends React.Component {
                      type="number"
                      onChange={this.handleChange} 
                      value={this.state.currentPayment} 
-                     autoComplete="off"/>
+                     autoComplete="off"              
+                     />
                      <br />
                      <button class="make-payment">Make Payment</button>
                   </div>
