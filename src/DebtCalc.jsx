@@ -20,8 +20,6 @@ class DebtCalc extends React.Component {
 
    handleChange = ({target: {value, name}}) =>{
       this.setState({[name]: value});
-      // this.currentPayment();
-      // this.handlePayment();
    };
    
    currentPayment = (e) => {
@@ -37,22 +35,12 @@ class DebtCalc extends React.Component {
       if (this.state.loan > 100) {
          const totalPay = (+initialPay + +secondPay).toFixed(0);
          const monthlyPay = (+this.state.loan / totalPay).toFixed(2);
-/*          const updatedInfo = {
-            intPerMonth: interestReverse,
-            totalDebt: this.state.loan
-         }; */
-         // console.log(updatedInfo.intPerMonth, 'intPerMonth');
 
          this.setState({minPayment: totalPay, monthlyPayment: monthlyPay})
       }  
       else if (this.state.loan <= 100) {
          const totalPay = +initialPay + +secondPay;
          const monthlyPay = +this.state.loan / totalPay;
-
-/*          const updatedInfo = {
-            intPerMonth: interestReverse,
-            totalDebt: this.state.loan
-         } */
 
          this.setState({minPayment: totalPay, monthlyPayment: monthlyPay})
       }
@@ -61,7 +49,6 @@ class DebtCalc extends React.Component {
          totalDebt: this.state.loan
       }
       this.setState({debtInfo: updatedInfo})
-      // this.setState({minPayment: totalPay, monthlyPayment: monthlyPay, debtInfo: updatedInfo})
 
    }
 
