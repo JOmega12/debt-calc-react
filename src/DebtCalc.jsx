@@ -52,20 +52,34 @@ class DebtCalc extends React.Component {
 
    }
 
+
+   //to update the state of the current loan:
+   //if the minimum amount is payed: 
+      //the current loan is updated (the state is updated)
+      //the estimate number of payments is also updated (state update)
+      //the minimum payment is also updated (state update)
+   //else:
+      // NAN
+
    handleSubmit = (e) => {
       e.preventDefault();
 
       const { currentPayment, minPayment, debtInfo} = this.state;
       const currentPay = +this.state.currentPayment;
       const principle = (+currentPay - +debtInfo.intPerMonth);
+      console.log(principle, 'principle');
+
       const remainder = +(debtInfo.totalDebt - principle).toFixed(2);
+      console.log(remainder, 'remainder');
+
+
       if (+currentPayment >= +minPayment) {
          const newItem = {
             currentPayment: +currentPay,
             remDebt: remainder,
             id: Date.now(),
          };
-   
+
          this.setState((state) => ({
             payHistory: [...state.payHistory, newItem],
             currentPayment: 0,
@@ -73,6 +87,7 @@ class DebtCalc extends React.Component {
             id: '',
             pay: true,
          }));
+
 
       } else if (+currentPayment < +minPayment) {
          this.setState({currentPayment: +currentPay});
@@ -95,6 +110,12 @@ class DebtCalc extends React.Component {
          alert(`You must pay the minimum payment (${minPayment})`);
       }  
    }
+
+
+   //current issues:
+   //1. remaining balance is not updating after the payment was successful
+   //2.minimum payment is not updating after the payment was successful
+
 
    render() {
       const inputs = [
@@ -124,11 +145,16 @@ class DebtCalc extends React.Component {
                   })}
                   <button class="calculate" onClick={(e) => this.currentPayment(e)}>Calculate</button>
                   <br /><br />
+
+                  <div> Current Loan: {this.state.remDebt}</div>
                   <div>Estimate Number of Payments: {this.state.monthlyPayment} </div>
                   <br />
                   <div>Minimum Payment: {this.state.minPayment}</div>
                   <br />
                   </div>
+
+
+
                   <div class="pay-here">
                      <div>Pay here:</div>
                      <input name="currentPayment"
