@@ -14,7 +14,8 @@ class DebtCalc extends React.Component {
          currentPayment: 0,
          debtInfo: [],
          remDebt: 0,
-         pay: false
+         pay: false,
+         maxPayment: 0,
       }
    }
 
@@ -31,7 +32,7 @@ class DebtCalc extends React.Component {
       const interestReverse = (this.state.loan* actualInterestMonth) / 12;
       const secondPay = this.state.loan * interestPercentage;
 
-//this handles the edge case if the user has <$100 in loan left
+      //this handles the edge case if the user has <$100 in loan left for calculations
       if (this.state.loan > 100) {
          const totalPay = (+initialPay + +secondPay).toFixed(0);
          const monthlyPay = (+this.state.loan / totalPay).toFixed(2);
@@ -52,28 +53,31 @@ class DebtCalc extends React.Component {
 
    }
 
-
-   //to update the state of the current loan:
-   //if the minimum amount is payed: 
-      //the current loan is updated (the state is updated)
-      //the estimate number of payments is also updated (state update)
-      //the minimum payment is also updated (state update)
-   //else:
-      // NAN
-
    handleSubmit = (e) => {
       e.preventDefault();
 
-      const { currentPayment, minPayment, debtInfo} = this.state;
+      const { currentPayment, minPayment, debtInfo, loan, interest} = this.state;
+      const initialPay = loan * .01;
+      const interestPercentage = (interest / 100) / 12;
+      const secondPay = loan * interestPercentage;
       const currentPay = +this.state.currentPayment;
       const principle = (+currentPay - +debtInfo.intPerMonth);
-      console.log(principle, 'principle');
-
+      // console.log(principle, 'principle');
       const remainder = +(debtInfo.totalDebt - principle).toFixed(2);
-      console.log(remainder, 'remainder');
+      // console.log(remainder, 'remainder');
+      const totalPay = (+initialPay + +secondPay).toFixed(0);
+      const monthlyPay = (+this.state.loan / totalPay).toFixed(2);
+      this.setState({monthlyPayment: monthlyPay});
 
+      if (+currentPayment >= +minPayment && +currentPayment <= +debtInfo.totalDebt) {
+         const totalPay = (+initialPay + +secondPay).toFixed(0);
+         const monthlyPay = (+this.state.loan / totalPay).toFixed(2);
+         const updatedInfo = {
+            // intPerMonth: interestReverse,
+            totalDebt: this.state.loan
+         }
+         this.setState({debtInfo: updatedInfo})
 
-      if (+currentPayment >= +minPayment) {
          const newItem = {
             currentPayment: +currentPay,
             remDebt: remainder,
@@ -84,37 +88,40 @@ class DebtCalc extends React.Component {
             payHistory: [...state.payHistory, newItem],
             currentPayment: 0,
             remDebt: +remainder,
+            loan: remainder,
+            monthlyPayment: monthlyPay,
+            minPayment: totalPay,
             id: '',
             pay: true,
          }));
-
-
+         
       } else if (+currentPayment < +minPayment) {
          this.setState({currentPayment: +currentPay});
          alert(`Payment must be greater than or equal to the minimum payment (${minPayment})`);
-      } else if (+currentPayment > +this.state.loan) {
-         this.setState = {
-            loan: 0,
-            interest: 0,
-            payHistory: [],
-            minPayment: 0,
-            monthlyPayment: 0,
+      } else if (+currentPayment >= +loan) {
+         
+         const newItem = {
+            currentPayment: +currentPay,
+            remDebt: remainder,
+            id: Date.now(),
+         };
+
+         this.setState((state) => ({
+            payHistory: [...state.payHistory, newItem],
             currentPayment: 0,
-            debtInfo: [],
             remDebt: 0,
-            pay: false
-         }
+            loan: 0,
+            monthlyPayment: 0,
+            minPayment: 0,
+            id: '',
+            pay: true,
+         }));
          alert(`You are now debt free!`);
       } else if(+currentPayment === 0) {
          this.setState({currentPayment: +currentPay});
          alert(`You must pay the minimum payment (${minPayment})`);
       }  
    }
-
-
-   //current issues:
-   //1. remaining balance is not updating after the payment was successful
-   //2.minimum payment is not updating after the payment was successful
 
 
    render() {
@@ -145,16 +152,12 @@ class DebtCalc extends React.Component {
                   })}
                   <button class="calculate" onClick={(e) => this.currentPayment(e)}>Calculate</button>
                   <br /><br />
-
-                  <div> Current Loan: {this.state.remDebt}</div>
+                  <div> Current Loan: {this.state.loan}</div>
                   <div>Estimate Number of Payments: {this.state.monthlyPayment} </div>
                   <br />
                   <div>Minimum Payment: {this.state.minPayment}</div>
                   <br />
                   </div>
-
-
-
                   <div class="pay-here">
                      <div>Pay here:</div>
                      <input name="currentPayment"
