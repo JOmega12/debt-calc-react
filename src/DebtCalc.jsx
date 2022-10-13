@@ -52,7 +52,6 @@ class DebtCalc extends React.Component {
          const totalPay = (+initialPay + +secondPay).toFixed(0);
          const monthlyPay = (+loan / totalPay).toFixed(2);
 
-
          const updatedInfo = {
             intPerMonth: interestReverse,
             totalDebt: loan
@@ -73,7 +72,6 @@ class DebtCalc extends React.Component {
 
       }
    }
-
 
    //this does the initial calculation
    currentPayment = (e) => {
@@ -117,23 +115,17 @@ class DebtCalc extends React.Component {
          alert(`Payment must be greater than or equal to the minimum payment (${minPayment})`);
       } else if (+currentPayment >= +debtInfo.totalDebt) {
          
-         const newItem = {
-            currentPayment: +currentPay,
-            remDebt: remainder,
-            id: Date.now(),
-         };
 
-         this.setState((state) => ({
-            payHistory: [...state.payHistory, newItem],
+         this.setState({
             currentPayment: 0,
             remDebt: 0,
             loan: 0,
             monthlyPayment: 0,
             minPayment: 0,
             id: '',
-            pay: true,
+            pay: false,
             debtInfo: [],
-         }), this.currentPayment());
+         });
          alert(`You are now debt free!`);
       } else if(+currentPayment === 0) {
          this.setState({currentPayment: +currentPay});
