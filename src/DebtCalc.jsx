@@ -15,69 +15,88 @@ class DebtCalc extends React.Component {
          debtInfo: [],
          remDebt: 0,
          pay: false,
-         maxPayment: 0,
       }
    }
 
+
+   //this creates a value for the number in the HTML
    handleChange = ({target: {value, name}}) =>{
       this.setState({[name]: value});
    };
    
+   //this function handles the updated states constantly for
+   //minimumPayment, MonthlyPayments, Total Loan Left
+   handleState = (min, mon = 0, info) => {
+      this.setState({minPayment:min, monthlyPayment:mon, debtInfo: info})
+   }
+
+   //this handles the calculation separate from the other two buttons- calculate and submit payment
+   handleCalculations = (loan, interest) => {
+      //this sets up the initial state
+      const initialPay = loan * .01;
+
+      //converting to interest 
+      const actualInterestMonth= interest / 100;
+
+      //how much interest per month for 12 months
+      const interestPercentage = (interest / 100) / 12;
+
+      //this is how much interest is paid per month
+      const interestReverse = (loan* actualInterestMonth) / 12;
+
+      //how much is the interest to add on top of the initial principle
+      const secondPay = loan * interestPercentage;
+
+      //this handles the edge case if the user has <$100 in loan left for calculations
+      if (loan > 100) {
+         const totalPay = (+initialPay + +secondPay).toFixed(0);
+         const monthlyPay = (+loan / totalPay).toFixed(2);
+
+
+         const updatedInfo = {
+            intPerMonth: interestReverse,
+            totalDebt: loan
+         }
+
+         return this.handleState(totalPay, monthlyPay, updatedInfo)
+      }  
+      else if (loan <= 100) {
+         const totalPay = +initialPay + +secondPay;
+         const monthlyPay = +loan / totalPay;
+
+         const updatedInfo = {
+            intPerMonth: interestReverse,
+            totalDebt: loan
+         }
+
+         return this.handleState(totalPay, monthlyPay, updatedInfo)
+
+      }
+   }
+
+
+   //this does the initial calculation
    currentPayment = (e) => {
       e.preventDefault();
 
-      const initialPay = this.state.loan * .01;
-      const actualInterestMonth= this.state.interest / 100;
-      const interestPercentage = (this.state.interest / 100) / 12;
-      const interestReverse = (this.state.loan* actualInterestMonth) / 12;
-      const secondPay = this.state.loan * interestPercentage;
+      const {loan, interest} = this.state;
 
-      //this handles the edge case if the user has <$100 in loan left for calculations
-      if (this.state.loan > 100) {
-         const totalPay = (+initialPay + +secondPay).toFixed(0);
-         const monthlyPay = (+this.state.loan / totalPay).toFixed(2);
-
-         this.setState({minPayment: totalPay, monthlyPayment: monthlyPay})
-      }  
-      else if (this.state.loan <= 100) {
-         const totalPay = +initialPay + +secondPay;
-         const monthlyPay = +this.state.loan / totalPay;
-
-         this.setState({minPayment: totalPay, monthlyPayment: monthlyPay})
-      }
-      const updatedInfo = {
-         intPerMonth: interestReverse,
-         totalDebt: this.state.loan
-      }
-      this.setState({debtInfo: updatedInfo})
-
+      this.handleCalculations(loan, interest);
    }
 
+
+   //this handles the submit payment function along with automatically updating 
+   //the variables from the initial function calculation
    handleSubmit = (e) => {
       e.preventDefault();
 
-      const { currentPayment, minPayment, debtInfo, loan, interest} = this.state;
-      const initialPay = loan * .01;
-      const interestPercentage = (interest / 100) / 12;
-      const secondPay = loan * interestPercentage;
+      const { currentPayment, minPayment, debtInfo, interest} = this.state;
+
       const currentPay = +this.state.currentPayment;
       const principle = (+currentPay - +debtInfo.intPerMonth);
-      // console.log(principle, 'principle');
       const remainder = +(debtInfo.totalDebt - principle).toFixed(2);
-      // console.log(remainder, 'remainder');
-      const totalPay = (+initialPay + +secondPay).toFixed(0);
-      const monthlyPay = (+this.state.loan / totalPay).toFixed(2);
-      this.setState({monthlyPayment: monthlyPay});
 
       if (+currentPayment >= +minPayment && +currentPayment <= +debtInfo.totalDebt) {
-         const totalPay = (+initialPay + +secondPay).toFixed(0);
-         const monthlyPay = (+this.state.loan / totalPay).toFixed(2);
-         const updatedInfo = {
-            // intPerMonth: interestReverse,
-            totalDebt: this.state.loan
-         }
-         this.setState({debtInfo: updatedInfo})
-
          const newItem = {
             currentPayment: +currentPay,
             remDebt: remainder,
@@ -89,16 +108,14 @@ class DebtCalc extends React.Component {
             currentPayment: 0,
             remDebt: +remainder,
             loan: remainder,
-            monthlyPayment: monthlyPay,
-            minPayment: totalPay,
             id: '',
             pay: true,
-         }));
+         }), this.handleCalculations(remainder, interest));
          
       } else if (+currentPayment < +minPayment) {
          this.setState({currentPayment: +currentPay});
          alert(`Payment must be greater than or equal to the minimum payment (${minPayment})`);
-      } else if (+currentPayment >= +loan) {
+      } else if (+currentPayment >= +debtInfo.totalDebt) {
          
          const newItem = {
             currentPayment: +currentPay,
@@ -115,14 +132,14 @@ class DebtCalc extends React.Component {
             minPayment: 0,
             id: '',
             pay: true,
-         }));
+            debtInfo: [],
+         }), this.currentPayment());
          alert(`You are now debt free!`);
       } else if(+currentPayment === 0) {
          this.setState({currentPayment: +currentPay});
          alert(`You must pay the minimum payment (${minPayment})`);
       }  
    }
-
 
    render() {
       const inputs = [
@@ -132,7 +149,8 @@ class DebtCalc extends React.Component {
       return (
          <div>
             <h2 class="debt-calc-h2">Debt Calculator</h2>
-            <form onSubmit= {this.handleSubmit}>
+            {/* <form onSubmit= {this.handleSubmit}> */}
+            <form>
                <div class="calculate-form">
                   <div className="first-column">
                   {inputs.map(item => {
@@ -167,7 +185,7 @@ class DebtCalc extends React.Component {
                      autoComplete="off"              
                      />
                      <br />
-                     <button class="make-payment">Make Payment</button>
+                     <button class="make-payment" onClick={(e)=> this.handleSubmit(e)}>Make Payment</button>
                   </div>
                </div>
 
