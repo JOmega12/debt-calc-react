@@ -82,7 +82,6 @@ class DebtCalc extends React.Component {
       this.handleCalculations(loan, interest);
    }
 
-
    //this handles the submit payment function along with automatically updating 
    //the variables from the initial function calculation
    handleSubmit = (e) => {
@@ -139,53 +138,54 @@ class DebtCalc extends React.Component {
          {label: 'Interest Rate', name: 'interest',},
       ]
       return (
-         <div>
+         <div className="container">
             <h2 class="debt-calc-h2">Debt Calculator</h2>
             {/* <form onSubmit= {this.handleSubmit}> */}
             <form>
                <div class="calculate-form">
-                  <div className="first-column">
-                  {inputs.map(item => {
-                     const {label, name} = item;
-                     return(
-                       <>
-                        <label htmlFor="">{label}</label><br />
-                        <input 
-                        name={name}
-                        type="number"
-                        onChange={this.handleChange}
-                        autoComplete ="off"
-                        value={this.state[name]}
-                        /><br />
-                       </> 
-                     )
-                  })}
-                  <button class="calculate" onClick={(e) => this.currentPayment(e)}>Calculate</button>
-                  <br /><br />
-                  <div> Current Loan: {this.state.loan}</div>
-                  <div>Estimate Number of Payments: {this.state.monthlyPayment} </div>
-                  <br />
-                  <div>Minimum Payment: {this.state.minPayment}</div>
-                  <br />
+                  <div className="leftBox">
+                     <div className="firstBox">
+                     {inputs.map(item => {
+                        const {label, name} = item;
+                        return(
+                        <>
+                           <label htmlFor="">{label}</label>
+                           <input 
+                           name={name}
+                           type="number"
+                           onChange={this.handleChange}
+                           autoComplete ="off"
+                           value={this.state[name]}
+                           />
+                        </> 
+                        )
+                     })}
+                     <button class="calculate" onClick={(e) => this.currentPayment(e)}>Calculate</button>
                   </div>
-                  <div class="pay-here">
-                     <div>Pay here:</div>
-                     <input name="currentPayment"
-                     type="number"
-                     onChange={this.handleChange} 
-                     value={this.state.currentPayment} 
-                     autoComplete="off"              
-                     />
-                     <br />
-                     <button class="make-payment" onClick={(e)=> this.handleSubmit(e)}>Make Payment</button>
+                  <div class='secondBox'>
+                     <div> Current Loan: {this.state.loan}</div>
+                     <div>Estimate Number of Payments: {this.state.monthlyPayment} </div>
+                     <div>Minimum Payment: {this.state.minPayment}</div>
+                  </div>
+                  </div>
+                  <div className="rightBox">
+                     <div class="pay-here thirdBox">
+                        <div>Pay here:</div>
+                        <input name="currentPayment"
+                           type="number"
+                           onChange={this.handleChange} 
+                           value={this.state.currentPayment} 
+                           autoComplete="off"              
+                        />
+                        <button class="make-payment" onClick={(e)=> this.handleSubmit(e)}>Make Payment</button>
+                     </div>
+                     <div class="history-payments fourthBox">
+                        <h4>History Payments</h4>
+                        <PaymentHistory items={this.state.payHistory}/>
+                     </div>
                   </div>
                </div>
-
             </form>
-            <div class="history-payments">
-               <h4>History Payments</h4>
-               <PaymentHistory items={this.state.payHistory}/>
-            </div>
          </div>
       )
    }

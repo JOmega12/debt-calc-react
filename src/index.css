@@ -5,6 +5,7 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: #CFCFC4;
 }
 
 code {
@@ -16,32 +17,80 @@ code {
   /* background-color: #660000; */
 }
 
+.container { 
+  text-align: center;
+}
+
 .debt-calc-h2 {
   border: 2px #660000 solid;
   padding: 10px;
-  margin: 0 10px;
+  margin: 20px 250px;
   margin-bottom: 20px;
 }
 
 .calculate-form {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 20px;
+}
+
+.leftBox {
+  display: flex;
+  flex-direction: column;
+}
+
+.firstBox {
+  display: flex;
+  flex-direction: column;
+  border: 2px green solid;
+  padding: 10px;
+  margin: 10px;
+  background-color: #FFE194;
+}
+
+.secondBox {
+  display: flex;
+  flex-direction: column;
+  border: 2px green solid;
+  padding: 10px;
+  margin: 10px;
+  background-color: #A3CFA7;
+}
+
+.rightBox {
+  display: flex;
+  flex-direction: column;
 }
 
 .pay-here {
-  align-self: center;
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  margin: 10px;
+  border: 2px green solid;
+  background-color: #F7DCEC;
+}
+
+.pay-here input{
+  margin: 10px;
 }
 
 .make-payment, .calculate {
   margin-top: 5px;
   padding:5px;
-  background-color: bisque;
+  /* background-color: bisque; */
   border-radius: 10px;
   font-size: large;
 }
 
 .history-payments {
-  background-color: antiquewhite;
-  color:black;
+  /* background-color: antiquewhite; */
+  display: flex;
+  flex-direction: column;
   padding: 5px;
+  margin: 5px;
+  border: 2px green solid;
+  background-color: #FFF1DE;
 }
+
