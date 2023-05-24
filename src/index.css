@@ -94,3 +94,48 @@ code {
   background-color: #FFF1DE;
 }
 
+@media screen and (max-width: 480px)
+  {
+  .container {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .debt-calc-h2 {
+    margin: 20px 0px;
+  }
+
+  .calculate-form {
+    gap: 0;
+  }
+
+  .calculate-form {
+    flex-direction: column;
+  }
+}
+
+@media screen and (max-width: 812px)  {
+  .container {
+    display: flex;
+    flex-direction: column;
+    margin: 0 50px;
+  }
+
+  .calculate-form {
+    flex-direction: column;
+  }
+
+  .firstBox, .secondBox, .thirdBox, .fourthBox {
+    padding: 50px;
+    margin: 50px;
+    font-size: 25px;
+  }
+
+  input {
+    justify-content: center;
+    text-align: center;
+    /* width: 125px; */
+    height: 50px;
+    font-size: larger;
+  }
+}
